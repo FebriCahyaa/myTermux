@@ -4,7 +4,7 @@
 
 <p align="center">
   <a href="./LICENSE"><img src="https://img.shields.io/badge/license-GPL-blue.svg"></a>
-  <a href="https://github.com/mayTermux/awesomeshot/releases"><img src="https://img.shields.io/github/release/mayTermux/myTermux.svg"></a>
+  <a href="https://github.com/mayTermux/awesomeshot/releases"><img src="https://img.shields.io/github/release/FebriCahyaa/myTermux.svg"></a>
 </p>
 
 ## Video Installation
@@ -47,7 +47,7 @@ pkg i -y git bc
   <summary><strong>Clone or Download This Repository</strong></summary>
 
 ```bash
-git clone --depth=1 https://github.com/mayTermux/myTermux.git
+git clone --depth=1 https://github.com/FebriCahyaa/myTermux.git
 ```
 
   </details>

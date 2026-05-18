@@ -107,7 +107,7 @@ main
 
 echo -e "\n\n"
 echo -e "  ┏━━━━━━━━━━━━━━━━━━━━━━┓"
-echo -e "  ┃ ${c1}r${c2}x${c7}f${c4}e${c5}t${c6}${c7}c${c1}h${c0}      ${c5}${c0}  ${c6}${c0}  ${c7}${c0} ┃  ${codename}${c5}@${c0}${client_base}"
+echo -e "  ┃ ${c1}F${c2}b${c7}r${c4}i${c5}C${c6}h${c7}y${c0}      ${c5}${c0}  ${c6}${c0}  ${c7}${c0} ┃  ${codename}${c5}@${c0}${client_base}"
 echo -e "  ┣━━━━━━━━━━━━━━━━━━━━━━┫"
 echo -e "  ┃                      ┃  ${c1}phone${c0}  ${model}"
 echo -e "  ┃          ${c3}•${c8}_${c3}•${c0}         ┃  ${c2}os${c0}     ${os}"

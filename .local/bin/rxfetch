@@ -40,7 +40,7 @@ function getDistro() {
 }
 
 function getKernel() {
-  kernel="$(uname -r)"
+  kernel="$(uname -r | cut -d '-' -f 1-3)"
 }
 
 function getTotalPackages() {
@@ -79,8 +79,8 @@ function getMemoryUsage() {
 }
 
 function getDiskUsage() {
-  _MOUNTED_ON="/data"
-  _GREP_ONE_ROW="$(df -h | grep ${_MOUNTED_ON})"
+  _MOUNTED_ON="/storage/emulated"
+  _GREP_ONE_ROW="$(df -h | grep ${_MOUNTED_ON} | head -n 1)"
   _SIZE="$(echo ${_GREP_ONE_ROW} | awk '{print $2}')"
   _USED="$(echo ${_GREP_ONE_ROW} | awk '{print $3}')"
   _AVAIL="$(echo ${_GREP_ONE_ROW} | awk '{print $4}')"

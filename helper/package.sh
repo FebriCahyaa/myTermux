@@ -41,30 +41,30 @@ function packages() {
 
     if [[ "${UNIT_DOWNLOAD_SIZE}" == "kB" && "${UNIT_INSTALLED_SIZE}" == "MB" ]]; then
 
-      KB_DOWNLOAD_SIZE=$(echo "${KB_DOWNLOAD_SIZE} + ${DOWNLOAD_SIZE} / 1024" | bc -l | xargs -i printf "%'.1f" {})
-      MB_INSTALLED_SIZE=$(echo "${MB_INSTALLED_SIZE} + ${INSTALLED_SIZE}" | bc -l | xargs -i printf "%'.1f" {})
+      KB_DOWNLOAD_SIZE=$(awk "BEGIN {printf \"%.1f\", ${KB_DOWNLOAD_SIZE} + ${DOWNLOAD_SIZE} / 1024}")
+      MB_INSTALLED_SIZE=$(awk "BEGIN {printf \"%.1f\", ${MB_INSTALLED_SIZE} + ${INSTALLED_SIZE}}")
 
     elif [[ "${UNIT_DOWNLOAD_SIZE}" == "MB" && "${UNIT_INSTALLED_SIZE}" == "kB" ]]; then
 
-      MB_DOWNLOAD_SIZE=$(echo "${MB_DOWNLOAD_SIZE} + ${DOWNLOAD_SIZE}" | bc -l | xargs -i printf "%'.1f" {})
-      KB_INSTALLED_SIZE=$(echo "${KB_INSTALLED_SIZE} + ${INSTALLED_SIZE} / 1024" | bc -l | xargs -i printf "%'.1f" {})
+      MB_DOWNLOAD_SIZE=$(awk "BEGIN {printf \"%.1f\", ${MB_DOWNLOAD_SIZE} + ${DOWNLOAD_SIZE}}")
+      KB_INSTALLED_SIZE=$(awk "BEGIN {printf \"%.1f\", ${KB_INSTALLED_SIZE} + ${INSTALLED_SIZE} / 1024}")
 
     elif [[ "${UNIT_DOWNLOAD_SIZE}" == "kB" && "${UNIT_INSTALLED_SIZE}" == "kB" ]]; then
 
-      KB_DOWNLOAD_SIZE=$(echo "${KB_DOWNLOAD_SIZE} + ${DOWNLOAD_SIZE} / 1024" | bc -l | xargs -i printf "%'.1f" {})
-      KB_INSTALLED_SIZE=$(echo "${KB_INSTALLED_SIZE} + ${INSTALLED_SIZE} / 1024" | bc -l | xargs -i printf "%'.1f" {})
+      KB_DOWNLOAD_SIZE=$(awk "BEGIN {printf \"%.1f\", ${KB_DOWNLOAD_SIZE} + ${DOWNLOAD_SIZE} / 1024}")
+      KB_INSTALLED_SIZE=$(awk "BEGIN {printf \"%.1f\", ${KB_INSTALLED_SIZE} + ${INSTALLED_SIZE} / 1024}")
 
     elif [[ "${UNIT_DOWNLOAD_SIZE}" == "MB" && "${UNIT_INSTALLED_SIZE}" == "MB" ]]; then
 
-      MB_DOWNLOAD_SIZE=$(echo "${MB_DOWNLOAD_SIZE} + ${DOWNLOAD_SIZE}" | bc -l | xargs -i printf "%'.1f" {})
-      MB_INSTALLED_SIZE=$(echo "${MB_INSTALLED_SIZE} + ${INSTALLED_SIZE}" | bc -l | xargs -i printf "%'.1f" {})
+      MB_DOWNLOAD_SIZE=$(awk "BEGIN {printf \"%.1f\", ${MB_DOWNLOAD_SIZE} + ${DOWNLOAD_SIZE}}")
+      MB_INSTALLED_SIZE=$(awk "BEGIN {printf \"%.1f\", ${MB_INSTALLED_SIZE} + ${INSTALLED_SIZE}}")
 
     fi
 
   done
 
-  TOTAL_DOWNLOAD_SIZE=$(echo "${KB_DOWNLOAD_SIZE} + ${MB_DOWNLOAD_SIZE}" | bc -l | xargs -i printf "%'.1f" {})
-  TOTAL_INSTALLED_SIZE=$(echo "${KB_INSTALLED_SIZE} + ${MB_INSTALLED_SIZE}" | bc -l | xargs -i printf "%'.1f" {})
+  TOTAL_DOWNLOAD_SIZE=$(awk "BEGIN {printf \"%.1f\", ${KB_DOWNLOAD_SIZE} + ${MB_DOWNLOAD_SIZE}}")
+  TOTAL_INSTALLED_SIZE=$(awk "BEGIN {printf \"%.1f\", ${KB_INSTALLED_SIZE} + ${MB_INSTALLED_SIZE}}")
 
   printf    "    ┃     [ ${COLOR_WARNING}%5s${COLOR_BASED} ]  ─────────────────────────────────> ${COLOR_WARNING}%6s${COLOR_BASED} %-2s           ${COLOR_WARNING}%6s${COLOR_BASED} %-2s     ┃" "TOTAL" ${TOTAL_DOWNLOAD_SIZE} "MB" ${TOTAL_INSTALLED_SIZE} "MB"
   echo -e "\n    ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛"

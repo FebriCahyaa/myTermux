@@ -6,8 +6,10 @@ HELPERS=(
   stat signal screen cursor finish
 )
 
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+
 for HELPER in ${HELPERS[@]}; do
-  source $(pwd)/helper/${HELPER}.sh
+  source ${SCRIPT_DIR}/helper/${HELPER}.sh
 done
 
 function main() {

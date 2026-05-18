@@ -42,8 +42,12 @@ REPOSITORY_PATH=(
 
 function repoSize() {
 
-    echo "$(echo "scale=2
-    $(curl https://api.github.com/$@ 2>/dev/null | grep size | head -1 | tr -dc '[:digit:]') / 1024" | bc)MB"
+    local size_kb=$(curl -s "https://api.github.com/$@" | grep '"size":' | head -1 | tr -dc '[:digit:]')
+    if [[ -z "$size_kb" ]]; then
+        echo "0.00MB"
+    else
+        echo "$(awk "BEGIN {printf \"%.2f\", $size_kb / 1024}")MB"
+    fi
 
 }
 

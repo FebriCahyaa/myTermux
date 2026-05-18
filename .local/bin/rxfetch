@@ -67,7 +67,43 @@ function getShell() {
 }
 
 function getUptime() {
-  uptime="$(uptime --pretty | sed 's/up//')"
+  local raw weeks days hours minutes total_days parts
+  raw="$(uptime --pretty | sed 's/up //')"
+  
+  weeks=$(echo "$raw" | grep -oE '[0-9]+ week' | awk '{print $1}')
+  days=$(echo "$raw" | grep -oE '[0-9]+ day' | awk '{print $1}')
+  hours=$(echo "$raw" | grep -oE '[0-9]+ hour' | awk '{print $1}')
+  minutes=$(echo "$raw" | grep -oE '[0-9]+ minute' | awk '{print $1}')
+  
+  total_days=$(( ${weeks:-0} * 7 + ${days:-0} ))
+  
+  parts=()
+  if [ $total_days -gt 0 ]; then
+    if [ $total_days -eq 1 ]; then
+      parts+=("1 day")
+    else
+      parts+=("$total_days days")
+    fi
+  fi
+  
+  if [ -n "$hours" ]; then
+    if [ "$hours" -eq 1 ]; then
+      parts+=("1 hour")
+    else
+      parts+=("$hours hours")
+    fi
+  fi
+  
+  if [ -n "$minutes" ]; then
+    if [ "$minutes" -eq 1 ]; then
+      parts+=("1 minute")
+    else
+      parts+=("$minutes minutes")
+    fi
+  fi
+  
+  uptime=$(printf ", %s" "${parts[@]}")
+  uptime=${uptime:2}
 }
 
 function getMemoryUsage() {

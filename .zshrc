@@ -24,8 +24,10 @@ source $ZSH/oh-my-zsh.sh
 source $HOME/.config/lf/icons
 
 # Prediction List View
+zstyle ':autocomplete:*' min-delay 1.0
+zstyle ':autocomplete:*' list-lines 4
+zstyle ':completion:*:warnings' format ''
 #zstyle ':autocomplete:*' default-context history-incremental-search-backward
-#zstyle ':autocomplete:history-incremental-search-backward:*' min-input 1
 
 source $HOME/.aliases
 source $HOME/.autostart

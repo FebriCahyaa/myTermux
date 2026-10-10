@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Update Ubuntu packages as proot's simulated root user.
+set -euo pipefail
+[[ -n "${PREFIX:-}" ]] || { echo "Run this command from Termux." >&2; exit 1; }
+PROFILE="${HOME}/.config/mytermux/ubuntu-profile.env"
+[[ -r "$PROFILE" ]] || { echo "Missing $PROFILE. Run ./install.sh first." >&2; exit 1; }
+# shellcheck source=/dev/null
+source "$PROFILE"
+DISTRO="${UBUNTU_DISTRO:-ubuntu}"
+HOST_NAME="${UBUNTU_HOST:-ubuntu-dev}"
+exec proot-distro login --hostname "$HOST_NAME" "$DISTRO" -- /bin/bash -lc 'apt-get update && apt-get -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold full-upgrade -y && apt-get autoremove -y'

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 REPOSITORY_LINKS=(
-  https://github.com/robbyrussell/oh-my-zsh
+  https://github.com/ohmyzsh/ohmyzsh
   https://github.com/zsh-users/zsh-syntax-highlighting
   https://github.com/zsh-users/zsh-autosuggestions
   https://github.com/joshskidmore/zsh-fzf-history-search
@@ -11,7 +11,7 @@ REPOSITORY_LINKS=(
 )
 
 REPOSITORY_APIS=(
-  repositories/291137
+  repos/ohmyzsh/ohmyzsh
   repos/zsh-users/zsh-syntax-highlighting
   repos/zsh-users/zsh-autosuggestions
   repos/joshskidmore/zsh-fzf-history-search
@@ -21,7 +21,7 @@ REPOSITORY_APIS=(
 )
 
 REPOSITORY_FULL_NAME=(
-  robbyrussell/oh-my-zsh
+  ohmyzsh/ohmyzsh
   zsh-users/zsh-syntax-highlighting
   zsh-users/zsh-autosuggestions
   joshskidmore/zsh-fzf-history-search

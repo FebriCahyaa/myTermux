@@ -1,0 +1,19 @@
+[init]
+    defaultBranch = main
+[core]
+    editor = nvim
+    autocrlf = false
+[fetch]
+    prune = true
+[diff]
+    colorMoved = default
+[merge]
+    conflictStyle = zdiff3
+[pull]
+    ff = only
+[push]
+    autoSetupRemote = true
+[alias]
+    st = status --short --branch
+    lg = log --graph --decorate --oneline --all
+    last = log -1 --stat

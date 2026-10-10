@@ -1,0 +1,51 @@
+# MacPro Dark — shared prompt configuration for Termux and Ubuntu proot.
+add_newline = false
+command_timeout = 800
+palette = "macpro"
+
+format = """
+$env_var.MYTERMUX_USER$env_var.MYTERMUX_HOST$directory$git_branch$git_status
+$character"""
+
+[palettes.macpro]
+green = "#A6E3A1"
+blue = "#89B4FA"
+purple = "#CBA6F7"
+yellow = "#F9E2AF"
+red = "#F38BA8"
+muted = "#A6ADC8"
+
+[env_var.MYTERMUX_USER]
+variable = "MYTERMUX_USER"
+default = "developer"
+format = "[$env_value](bold green)"
+
+[env_var.MYTERMUX_HOST]
+variable = "MYTERMUX_HOST"
+default = "android-dev"
+format = "[@$env_value](bold blue) "
+
+[directory]
+style = "bold purple"
+format = "[$path]($style) "
+truncation_length = 3
+truncation_symbol = "…/"
+read_only = " "
+
+[git_branch]
+symbol = " "
+style = "yellow"
+format = "[$symbol$branch]($style) "
+
+[git_status]
+style = "yellow"
+format = "[$all_status$ahead_behind]($style) "
+
+[cmd_duration]
+min_time = 1500
+format = "[took $duration](dimmed yellow) "
+
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+vimcmd_symbol = "[❮](bold yellow)"

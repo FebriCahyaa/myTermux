@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-VERSION="0.6.2"
-BUILD_DATE="03 April 2022"
+VERSION="1.0.0"
+BUILD_DATE="10 October 2026"
 AUTHOR="xShin"
 
 function banner() {

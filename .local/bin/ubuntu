@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Enter Ubuntu as the configured non-root user.
+set -euo pipefail
+[[ -n "${PREFIX:-}" ]] || { echo "Run this command from Termux." >&2; exit 1; }
+PROFILE="${HOME}/.config/mytermux/ubuntu-profile.env"
+[[ -r "$PROFILE" ]] || { echo "Missing $PROFILE. Run mytermux-setup or ./install.sh." >&2; exit 1; }
+# shellcheck source=/dev/null
+source "$PROFILE"
+DISTRO="${UBUNTU_DISTRO:-ubuntu}"
+USER_NAME="${UBUNTU_USER:-developer}"
+HOST_NAME="${UBUNTU_HOST:-ubuntu-dev}"
+command -v proot-distro >/dev/null 2>&1 || { echo "Install proot-distro first: pkg install proot-distro" >&2; exit 1; }
+if (($#)); then
+  [[ "$1" == "--" ]] && shift
+  exec proot-distro login --hostname "$HOST_NAME" --shared-tmp --bind "$HOME:/mnt/termux-home" --user "$USER_NAME" "$DISTRO" -- "$@"
+fi
+exec proot-distro login --hostname "$HOST_NAME" --shared-tmp --bind "$HOME:/mnt/termux-home" --user "$USER_NAME" "$DISTRO" -- /usr/bin/zsh -l

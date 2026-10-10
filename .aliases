@@ -23,7 +23,13 @@ alias pacupd="pkg update"
 alias pacupgupd="pkg update && pkg upgrade"
 
 #Convert Video
-alias convi="ffmpeg -i $1 -c:v libx264 -crf 25 $2"
+function convi() {
+  if (( $# < 2 )); then
+    echo "Usage: convi INPUT OUTPUT" >&2
+    return 2
+  fi
+  ffmpeg -i "$1" -c:v libx264 -crf 25 "$2"
+}
 
 #Ping    
 alias pg="ping google.com"
@@ -80,20 +86,30 @@ alias largefile="du -h -x -s -- * | sort -r -h | head -20"
 
 #System Information
 #alias neo="bash ~/.config/neofetch/debug-logo.sh --randomsmall"
-alias neo="neofetch"
-alias neodebug="bash ~/.config/neofetch/debug-logo.sh $1"
+if command -v fastfetch >/dev/null 2>&1; then
+  alias neo='fastfetch'
+elif command -v neofetch >/dev/null 2>&1; then
+  alias neo='neofetch'
+fi
+function neodebug() { bash "$HOME/.config/neofetch/debug-logo.sh" "$@"; }
 alias disk="bash ~/.scripts/system/fetch.sh storage"
 alias battery="bash ~/.scripts/system/fetch.sh battery"
-alias ls="eza --icons"
-alias la="eza --icons -lgha --group-directories-first"
-alias lt="eza --icons --tree"
-alias lta="eza --icons --tree -lgha"
+if command -v eza >/dev/null 2>&1; then
+  alias ls='eza --icons'
+  alias la='eza --icons -lgha --group-directories-first'
+  alias lt='eza --icons --tree'
+  alias lta='eza --icons --tree -lgha'
+else
+  alias la='ls -lah'
+fi
 alias bat="bat --theme OneHalfDark"
-alias cat="bat --theme OneHalfDark -p $@"
+if command -v bat >/dev/null 2>&1; then
+  alias cat='bat --theme OneHalfDark -p'
+fi
 
 #proot-distro
 alias prot="cd $PREFIX/var/lib/proot-distro"
-alias protlogin="proot-distro login $1"
+function protlogin() { proot-distro login "$@"; }
 
 #Magick
 alias listfont="magick convert -list font | grep -iE 'font:.*'"
@@ -124,7 +140,7 @@ alias zshconf="nvim ~/.zshrc"
 alias neoconf="nvim ~/.config/neofetch/config.conf"
 alias rxconf="nvim ~/.local/bin/rxfetch"
 alias neoscript="nvim ~/.config/neofetch/script.sh"
-alias fetch="bash ~/.scripts/system/fetch.sh $@"
+function fetch() { bash "$HOME/.scripts/system/fetch.sh" "$@"; }
 alias fetchconf="nvim ~/.scripts/system/fetch.sh"
 
 alias awesomeconf="nvim ~/.config/awesomeshot/awesomeshot.conf"
@@ -133,8 +149,15 @@ alias awesomeconf="nvim ~/.config/awesomeshot/awesomeshot.conf"
 alias gitgraph="git log --all --decorate --oneline --graph"
 alias gitupdate="git fetch && git pull"
 alias gitstat="git status"
-alias gitad="git add $@"
-alias gitcom="git commit -m '$@'"
+function gitad() { git add "$@"; }
+function gitcom() {
+  if (( $# == 0 )); then
+    echo "Usage: gitcom COMMIT MESSAGE" >&2
+    return 2
+  fi
+  local message="$*"
+  git commit -m "$message"
+}
 
 #Web Server (Require install LAMP on Termux) https://github.com/xshin404/lampTermux
 alias apaconf="nvim $PREFIX/etc/apache2/httpd.conf"
@@ -147,11 +170,11 @@ alias refresh="source $HOME/.zshrc"
 alias unsource="exec $SHELL -l"
 
 #PID Login
-alias loginconf="nvim ~/.scripts/login.sh"
-alias exit="if [ -f ~/.scripts/pid/login ]; then rm ~/.scripts/pid/login; fi && exit"
+alias loginconf="nvim ~/.scripts/system/login.sh"
+# Use the shell's normal `exit` builtin. A recursive alias can make exiting unreliable.
 
 #MyIP
-alias myipconf="nvim ~/.scripts/ip.sh"
+alias myipconf="nvim ~/.scripts/system/ip.sh"
 
 #termux-reload
 alias reload="termux-reload-settings"
@@ -174,3 +197,32 @@ alias zshthemeconf="nvim ~/.scripts/zsh/changetheme.sh"
 # Termux:API
 alias scan="termux-media-scan"
 alias open="termux-open"
+
+
+# MacPro Dark / Ubuntu proot helpers.
+function mkcd() {
+  if (( $# != 1 )); then echo "Usage: mkcd DIRECTORY" >&2; return 2; fi
+  mkdir -p -- "$1" && cd -- "$1"
+}
+function extract() {
+  if (( $# != 1 )); then echo "Usage: extract ARCHIVE" >&2; return 2; fi
+  case "$1" in
+    *.tar.bz2|*.tbz2) tar -xjf "$1" ;;
+    *.tar.gz|*.tgz) tar -xzf "$1" ;;
+    *.tar.xz|*.txz) tar -xJf "$1" ;;
+    *.tar.zst) tar --zstd -xf "$1" ;;
+    *.tar) tar -xf "$1" ;;
+    *.zip) unzip "$1" ;;
+    *.gz) gunzip "$1" ;;
+    *.bz2) bunzip2 "$1" ;;
+    *.xz) unxz "$1" ;;
+    *) echo "Unsupported archive: $1" >&2; return 2 ;;
+  esac
+}
+function croot() { git rev-parse --show-toplevel 2>/dev/null || pwd; }
+function gst() { git status --short --branch; }
+function gdiff() { git diff --color=always "$@"; }
+function ub() { "$HOME/.local/bin/ubuntu" "$@"; }
+function ubr() { "$HOME/.local/bin/ubroot" "$@"; }
+function ubinstall() { "$HOME/.local/bin/ubuntu-install" "$@"; }
+function mtdoctor() { "$HOME/.local/bin/mytermux-doctor" "$@"; }

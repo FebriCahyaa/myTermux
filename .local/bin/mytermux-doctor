@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+set -u
+PASS='\033[1;32mPASS\033[0m'
+WARN='\033[1;33mWARN\033[0m'
+FAIL='\033[1;31mFAIL\033[0m'
+pass() { printf "[$PASS] %s\n" "$*"; }
+warn() { printf "[$WARN] %s\n" "$*"; }
+fail() { printf "[$FAIL] %s\n" "$*"; }
+
+printf '\nmyTermux environment doctor\n===========================\n'
+if [[ -n "${PREFIX:-}" && -x "$PREFIX/bin/pkg" ]]; then pass "Running in Termux ($PREFIX)"; else fail "Not running in Termux"; fi
+if [[ -r "$HOME/.config/mytermux/profile.env" ]]; then
+  # shellcheck source=/dev/null
+  source "$HOME/.config/mytermux/profile.env"
+  pass "Termux prompt identity: ${MYTERMUX_USER:-unset}@${MYTERMUX_HOST:-unset}"
+else warn "Termux identity not configured"; fi
+for cmd in zsh starship git ssh python clang cmake ninja; do
+  if command -v "$cmd" >/dev/null 2>&1; then pass "$cmd: $(command -v "$cmd")"; else warn "$cmd is not installed"; fi
+done
+if command -v proot-distro >/dev/null 2>&1; then
+  pass "proot-distro is installed"
+  if [[ -r "$HOME/.config/mytermux/ubuntu-profile.env" ]]; then
+    # shellcheck source=/dev/null
+    source "$HOME/.config/mytermux/ubuntu-profile.env"
+    if proot-distro list --quiet 2>/dev/null | grep -Fxq "${UBUNTU_DISTRO:-ubuntu}" || [[ -d "$PREFIX/var/lib/proot-distro/installed-rootfs/${UBUNTU_DISTRO:-ubuntu}" || -d "$PREFIX/var/lib/proot-distro/containers/${UBUNTU_DISTRO:-ubuntu}/rootfs" ]]; then
+      pass "Ubuntu rootfs exists (${UBUNTU_DISTRO:-ubuntu})"
+      pass "Ubuntu login identity: ${UBUNTU_USER:-unset}@${UBUNTU_HOST:-unset}"
+    else warn "Ubuntu rootfs is not installed; run ubuntu-install"; fi
+  else warn "Ubuntu profile not configured"; fi
+else warn "proot-distro is not installed"; fi
+if command -v df >/dev/null 2>&1; then df -h "$HOME" | sed -n '1,2p'; fi
+printf '\nReminder: proot is a userspace Linux environment, not real Android root.\n\n'

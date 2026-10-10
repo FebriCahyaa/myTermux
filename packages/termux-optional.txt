@@ -1,0 +1,6 @@
+# Optional packages for existing myTermux media/system-info helpers.
+fastfetch
+mpc
+mpd
+ncmpcpp
+termux-api

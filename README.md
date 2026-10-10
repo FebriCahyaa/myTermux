@@ -1,186 +1,106 @@
-<h1 align="center">myTermux</h1>
+# myTermux — MacPro Dark Developer Environment
 
-<p align="center">This is my personal configuration for my favorite Termux</p>
+A polished, macOS-inspired developer environment for Termux, with a repeatable setup flow for shell dotfiles, a custom `user@host` prompt, and a full Ubuntu userspace through `proot-distro`.
 
-<p align="center">
-  <a href="./LICENSE"><img src="https://img.shields.io/badge/license-GPL-blue.svg"></a>
-  <a href="https://github.com/mayTermux/awesomeshot/releases"><img src="https://img.shields.io/github/release/FebriCahyaa/myTermux.svg"></a>
-</p>
+> **What this changes:** terminal colors, font, shell configuration, prompt identity, developer utilities, and an optional Ubuntu userspace. It does not turn Android into macOS, change Android's real app UID, or provide root privileges to the Android host.
 
-## Video Installation
+## Features
 
-> Click this thumbnail below to see video installation
+- **MacPro Dark terminal style:** graphite background, muted Catppuccin-like accents, Nerd Font, two-line Starship prompt, Git branch/status, and a compact cursor.
+- **Interactive identity setup:** configure a Termux prompt user/host and a separate Ubuntu Linux account/host.
+- **Safer dotfile deployment:** only touched files are backed up with a timestamp; unrelated files in `$HOME/.config` are preserved.
+- **Zsh environment:** Oh My Zsh, autosuggestions, syntax highlighting, fzf history search, autocomplete, and Starship when installed.
+- **Developer tools:** Git/Git LFS, SSH, Python, Clang/LLVM, CMake, Ninja, Make, Rust, Node.js LTS, ripgrep, fzf, tmux, Neovim, jq, rsync, shellcheck, and other packages where available.
+- **Ubuntu proot setup:** creates a regular Linux account, configures the prompt host, and installs common source-build, Android, ROM, and kernel development dependencies available for the installed Ubuntu release and device architecture.
+- **Convenience commands:** `ubuntu`, `ubroot`, `ubuntu-install`, `ubuntu-update`, and `mytermux-doctor`.
+- **Repeatable installation:** safe to run again; existing changed files receive timestamped backups.
 
-[![myTermux Thumbnail](https://user-images.githubusercontent.com/64394320/170211137-554dfd78-8424-4699-876c-7483b45de068.png)](https://www.youtube.com/watch?v=sYkNxK_44Zg "myTermux - Installation")
+## Requirements
 
-## Installation Dependecies
+1. Install Termux from [F-Droid](https://f-droid.org/en/packages/com.termux/) or the [official GitHub releases](https://github.com/termux/termux-app/releases). Keep Termux and its add-ons from the same source.
+2. Have a working network connection and enough free storage. Installing the Ubuntu root filesystem and development dependencies may consume several gigabytes; Android ROM builds can need much more space.
+3. The optional `termux-api` package also requires the separate Termux:API Android application. Most core terminal features do not require it.
 
-> **Attention!**
->
-> - [Termux must be **F-Droid** Version](https://f-droid.org/en/packages/com.termux/) because Termux from Playstore no longer maintained because there are some problems with the Playstore publishing
-> - [Termux:API must be installed](https://f-droid.org/en/packages/com.termux.api/) myTermux use API command from Termux:API like fetch `termux-battery-status`
-
-  <details open>
-  <summary><strong>Update Repository & Upgrade Package</strong></summary>
-
-```bash
-pkg update && pkg upgrade
-```
-
-  </details>
-
-  <details>
-  <summary><strong>git & bc</strong></summary>
-
-- Package `git` for cloning or downloading repository
-- Package `bc` for calculate repository size which will be cloning or downloading
+## Install
 
 ```bash
-pkg i -y git bc
-```
+pkg update
+pkg install -y git
 
-  </details>
-
-## Installation myTermux
-
-  <details open>
-  <summary><strong>Clone or Download This Repository</strong></summary>
-
-```bash
 git clone --depth=1 https://github.com/FebriCahyaa/myTermux.git
-```
-
-  </details>
-
-  <details>
-  <summary><strong>Run Script Installer</strong></summary>
-
-- Move to Folder
-
-```bash
 cd myTermux
-```
-
-- export variable `COLUMNS` and `LINES`
-
-> This variable function so that the installer script can read the
-> `column` and `row` widths of Termux Application so that later it
-> matches the output during the installation process.
-
-```bash
-export COLUMNS LINES
-```
-
-- Execute Installer
-
-```bash
+chmod +x install.sh
 ./install.sh
 ```
 
-![Error](https://user-images.githubusercontent.com/64394320/170210843-a4ee5203-2892-4083-81a8-fe89981cac80.png)
+The installer asks for four values. On later runs, it reuses the previously saved identity values as defaults, so pressing Enter does not reset your custom names:
 
-> If you get error message `Please Zoom Out`.
-> Zoom Out on Termux Application then run again the script
+- **Termux display username** — shown in the prompt; it does not change Android's managed app UID.
+- **Termux host label** — shown in the prompt.
+- **Ubuntu Linux username** — a real non-root account in the Ubuntu userspace.
+- **Ubuntu prompt host** — the host label shown by Ubuntu's prompt.
 
-> If the row and column widths of the application are correct,
-> the script will automatically run, like this:
+The default Termux package installation includes development tools. Optional media and Termux:API utilities are offered separately. At the end, choose whether to install Ubuntu immediately; the default is **No** because the download and build dependencies can be large.
 
-![banner_out](https://user-images.githubusercontent.com/64394320/170211059-9d740d4f-b657-4da5-a319-a3e09af0be3b.png)
+To install Ubuntu later (the script defaults to Ubuntu 24.04 LTS unless an existing Ubuntu container is already installed):
 
-> Then follow the installation until it's finished
+```bash
+ubuntu-install
+```
 
-  </details>
+To install dotfiles without changing packages:
 
-## :camera_flash: Screenshots
+```bash
+./install.sh --skip-packages --skip-ubuntu
+```
 
-> This screenshot take by [**Awesomeshot**](https://github.com/mayTermux/awesomeshot) and system fetch by [**rxfetch-termux**](https://github.com/mayTermux/rxfetch-termux)
+## Ubuntu proot workflow
 
-- System Fetch
+```bash
+ubuntu            # Open Ubuntu as the configured non-root account
+ubroot            # Open an explicit administration shell inside Ubuntu
+ubuntu-update     # Update and upgrade Ubuntu packages
+ubuntu-install    # Install/reapply Ubuntu and build dependencies
+mytermux-doctor   # Check package availability, profile, rootfs, and storage
+mytermux-setup    # Reconfigure the saved Termux/Ubuntu identities
+```
 
-  > rxfetch
+The configured Ubuntu session also mounts the Termux home at `/mnt/termux-home` (including files under that home, so its SSH configuration is visible inside Ubuntu) and shares `/tmp`; use `cdtermux` to enter the mounted home. Android shared storage remains available through `/sdcard` and `/storage` when Termux has storage permission; grant it with `termux-setup-storage`. The Ubuntu bootstrap installs packages such as `build-essential`, Clang/LLVM, GCC/G++, CMake, Ninja, Meson, Python tooling, Java's default JDK, Git/Git LFS, common kernel build dependencies, and Android utilities when the current Ubuntu repositories and CPU architecture provide them. Package availability differs across Ubuntu releases, so unavailable optional packages are reported and skipped rather than treated as guaranteed.
 
-  ![rxfetch](https://user-images.githubusercontent.com/64394320/170211137-554dfd78-8424-4699-876c-7483b45de068.png)
+Use `ubroot` for package management or system-level changes **inside the Ubuntu proot**. `sudo` is intentionally not required by the setup workflow because PRoot's simulated privileges do not behave exactly like a normal VM or physical Linux installation.
 
-  > neofetch
+### Important PRoot limitations
 
-  ![neofetch_out](https://user-images.githubusercontent.com/64394320/170211168-9e44dab1-7047-4f12-985c-3608b93ee033.png)
+- PRoot is a Linux userspace environment, **not a virtual machine and not real Android root**. It cannot grant access to Android kernel interfaces or load kernel modules on the host.
+- The configured Ubuntu hostname is used for shell prompts and is recorded in `/etc/hostname`; PRoot cannot reliably change the Android host kernel's actual hostname.
+- Android storage, RAM, thermal throttling, process limits, and kernel behavior still constrain builds. Large AOSP/ROM builds may be impractical on a phone, and some build systems or services may require a conventional Linux machine.
+- The bootstrap installs system build dependencies; it does not automatically download every Android SDK/NDK image or all ROM-specific proprietary blobs. Fetch those according to each project's instructions.
 
-- Colorscheme (Theme)
+## Prompt and terminal style
 
-  > Change colorscheme or theme with command:
+The Starship prompt is configured in `~/.config/starship.toml`; terminal colors and keyboard rows are configured in `~/.termux/colors.properties` and `~/.termux/termux.properties`. If colors or fonts do not refresh automatically, restart the Termux session. The font shipped with this repository is Nerd Font-compatible for prompt icons.
 
-  ```bash
-  chcolor
-  ```
+Android Termux remains a native Android app, so macOS-style red/yellow/green window controls are only a visual reference; these dotfiles style the terminal content, not Android's app chrome. The installer keeps external command launches disabled by default for a safer Termux setup. If you intentionally use an add-on that requires external `RUN_COMMAND` launches, review that add-on and the `allow-external-apps` setting before enabling it.
 
-  ![chcolor_out](https://user-images.githubusercontent.com/64394320/170211188-69f6317f-31e5-4feb-8422-3b0912ec3f8d.png)
+## Useful Zsh helpers
 
-  <details>
-  <summary>Show Preview</summary>
+- `mkcd DIR` — create a directory and enter it.
+- `extract ARCHIVE` — extract supported tar, zip, gzip, bzip2, xz, or zstd archives.
+- `gst` — compact Git status.
+- `gdiff` — colorized Git diff.
+- `ub` / `ubr` — enter Ubuntu as the configured user / simulated root.
+- `mtdoctor` — run environment diagnostics.
 
-  ![colorscheme](https://i.ibb.co/4Vjdk89/out2.png)
+The existing color/font/theme selector utilities remain in `.scripts/` for users who want to keep exploring the original myTermux setup.
 
-  </details>
+## Validation
 
-- Fonts
+Run local static checks from the project root:
 
-  > Change font used with command:
-
-  ```bash
-  chfont
-  ```
-
-  ![chfont_out](https://user-images.githubusercontent.com/64394320/170211200-74ffac55-3181-4b43-9faa-a076ba847a70.png)
-
-- ZSH Theme
-
-  > Change ZSH Theme with command:
-
-  ```bash
-  chzsh
-  ```
-
-  ![zsh_out](https://user-images.githubusercontent.com/64394320/170211230-059d59be-376b-440c-9fb9-ea3750c983b9.png)
-
-- [NVIM] - Text Editor
-
-  ![nvim_out](https://user-images.githubusercontent.com/64394320/170211252-e11d41cf-7674-40e5-b1f8-11ac3320a83f.png)
-
-  <details>
-  <summary>Show Theme</summary>
-
-  ![NvChad Theme](https://i.ibb.co/6DqyPqT/final-text-editor.png)
-
-  </details>
-
-- [NCMPCPP] - Music Player
-
-  ![music_out](https://user-images.githubusercontent.com/64394320/170211279-a26d0f0e-1cf8-4b8b-ae21-8a1a79515574.png)
-
-- [COLORTOYS] - Pipes
-
-  ![pipes](https://user-images.githubusercontent.com/66439853/178114136-25a80169-2413-4a92-ac4b-e0df649da5f2.png)
-
-- [COLORTOYS] - Panes, Bar, Bloks
-
-  ![panes-bar-bloks](https://user-images.githubusercontent.com/66439853/178114094-1e1a9956-46f9-446b-a527-86b61e9c77e0.png)
-
-- [NYANCAT]
-
-  ![nyancat_out](https://user-images.githubusercontent.com/64394320/170211265-40e42967-1aee-40ad-9a39-11e9a45139ee.png)
+```bash
+bash tests/validate.sh
+```
 
 ## Credits
 
-- [siduck](https://github.com/siduck) Neovim Setup (NvChad), Colorscheme (onedark-siduck)
-- [owl4ce](https://github.com/owl4ce) First time getting to know dotfiles
-- [adi1090x](https://github.com/adi1090x) Termux Setup
-- [bandithijo](https://github.com/bandithijo) Awesome screenshot like MacOS using imagemagick script
-- [lwotcynna](https://github.com/lwotcynna) Contibutor
-- [nekonako](https://github.com/nekonako) Colorscheme nekonako-djancoeg, nekonako-hue, nekonako-om-mar
-- [Dotfiles Indonesia](https://t.me/dotfiles_id)
-- [Vim Indonesia](https://t.me/VimID)
-- [Bashid.org](https://t.me/bashidorg)
-
-## Colorscheme
-
-- [catppuccin/termux](https://github.com/catppuccin/termux)
+This repository retains the original myTermux utilities and credit context, including work/inspiration from siduck/NvChad, owl4ce, adi1090x, bandithijo, nekonako, contributors, Dotfiles Indonesia, Vim Indonesia, and Bashid.org. See [LICENSE](./LICENSE) for the project's license terms.
